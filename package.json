@@ -1,0 +1,26 @@
+{
+  "name": "http-api-assignment-ii",
+  "version": "1.0.0",
+  "description": "http api assignment ii",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Test Complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cnj3565/http-api-assignment-ii.git"
+  },
+  "author": "Carter Jensen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cnj3565/http-api-assignment-ii/issues"
+  },
+  "homepage": "https://github.com/cnj3565/http-api-assignment-ii#readme",
+  "devDependencies": {
+    "eslint": "^8.23.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.26.0"
+  }
+}
