@@ -5,7 +5,7 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
-    const handleResponse = async (response) => {
+    const handleResponse = async (response, parseResponse) => {
       const content = document.querySelector('#content');
       
       switch(response.status) {
@@ -29,14 +29,12 @@
           break;
       }
       
-      //Parse the response to json. This works because we know the server always
-      //sends back json. Await because .json() is an async function.
-      let obj = await response.json();
-      
-      //If we have a message, display it.
-      if(obj.message){
-        content.innerHTML += `<p>${obj.message}</p>`;
-      }
+      if(parseResponse) {
+        const resText = await response.text();
+        content.innerHTML += `<p>${resText}</p>`;
+      } else {
+        content.innerHTML += `<p>Meta Data Received</p>`;
+      };
     };
 
     // Sends the user info, will be called in addUser

@@ -1,12 +1,13 @@
 const http = require('http');
 const url = require('url');
-const query = require('querystring');
+// const query = require('querystring');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 // sorts sent data from a POST method into a readable object
+/* old parseBody - moved to jsonResponses
 const parseBody = (request, response, handler) => {
   const body = [];
 
@@ -28,12 +29,13 @@ const parseBody = (request, response, handler) => {
     handler(request, response, bodyObject);
   });
 };
+*/
 
 // urlStruct to handle url directions
 const urlStruct = {
   POST: {
     // Try to put parseBody into jsonResponse? that was it can use parameters properly
-    '/addUser': parseBody(request, response, jsonHandler.addUser),
+    '/addUser': jsonHandler.addUser,
   },
   GET: {
     '/': htmlHandler.getIndex,
@@ -59,10 +61,9 @@ const onRequest = (request, response) => {
 
   // directing pathway to follow urlStruct into response methods
   if (urlStruct[request.method][parsedUrl.pathname]) {
-    urlStruct[request.method][parsedUrl.pathname](request, response);
-  } else {
-    urlStruct[request.method].notFound(request, response);
+    return urlStruct[request.method][parsedUrl.pathname](request, response);
   }
+  return urlStruct[request.method].notFound(request, response);
 };
 
 // start server

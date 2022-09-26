@@ -1,3 +1,4 @@
+const query = require('querystring');
 // will get reset when node or heroku get shut down
 const users = {};
 
@@ -17,8 +18,33 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
+// parseBody -----------------------------------------------------------------
+const parseBody = (request, response) => {
+  const body = [];
+
+  // possible error handler
+  request.on('error', (err) => {
+    console.dir(err);
+    response.statusCode = 400;
+    response.end();
+  });
+
+  request.on('data', (chunk) => {
+    body.push(chunk);
+  });
+
+  request.on('end', () => {
+    const bodyString = Buffer.concat(body).toString();
+    const bodyObject = query.parse(bodyString);
+
+    return bodyObject;
+  });
+};
+
 // addUser (with update functionality) ----------------------------------------
-const addUser = (request, response, body) => {
+const addUser = (request, response) => {
+  const body = parseBody(request, response);
+
   // default json message
   const responseJSON = {
     message: 'Name and age are both required.',
