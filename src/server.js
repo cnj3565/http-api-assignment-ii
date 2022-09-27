@@ -41,12 +41,10 @@ const urlStruct = {
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getCSS,
     '/getUsers': jsonHandler.getUsers,
-    '/notReal': jsonHandler.notFound,
     notFound: jsonHandler.notFound,
   },
   HEAD: {
     '/getUsers': jsonHandler.getUsersMeta,
-    '/notReal': jsonHandler.notFoundMeta,
     notFound: jsonHandler.notFoundMeta,
   },
 };
@@ -58,6 +56,12 @@ const onRequest = (request, response) => {
   if (!urlStruct[request.method]) {
     return urlStruct.HEAD.notFound(request, response);
   }
+
+  /*
+  if(request.method === 'POST') {
+    return parseBody(request, response, urlStruct[request.method][parsedUrl.pathname]);
+  }
+  */
 
   // directing pathway to follow urlStruct into response methods
   if (urlStruct[request.method][parsedUrl.pathname]) {

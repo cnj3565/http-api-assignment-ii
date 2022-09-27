@@ -19,7 +19,7 @@ const respondJSONMeta = (request, response, status) => {
 };
 
 // parseBody -----------------------------------------------------------------
-const parseBody = (request, response) => {
+const parseBody = (request, response, handler) => {
   const body = [];
 
   // possible error handler
@@ -36,47 +36,49 @@ const parseBody = (request, response) => {
   request.on('end', () => {
     const bodyString = Buffer.concat(body).toString();
     const bodyObject = query.parse(bodyString);
-
-    return bodyObject;
+    console.log(bodyObject);
+    handler(request, response, bodyObject);
   });
 };
 
 // addUser (with update functionality) ----------------------------------------
 const addUser = (request, response) => {
-  const body = parseBody(request, response);
+  parseBody(request, response, (request, response, body) => {
+    console.log(body);
 
-  // default json message
-  const responseJSON = {
-    message: 'Name and age are both required.',
-  };
+    // default json message
+    const responseJSON = {
+      message: 'Name and age are both required.',
+    };
 
-  // check that the required fields are submitted
-  if (!body.name || !body.age) {
-    responseJSON.id = 'missingParams';
-    return respondJSON(request, response, 400, responseJSON);
-  }
+    // check that the required fields are submitted
+    if (!body.name || !body.age) {
+      responseJSON.id = 'missingParams';
+      return respondJSON(request, response, 400, responseJSON);
+    }
 
-  // defaults status code to 204 for update cases
-  let responseCode = 204;
+    // defaults status code to 204 for update cases
+    let responseCode = 204;
 
-  // if new user
-  if (!users[body.name]) {
-    responseCode = 201;
-    users[body.name] = {};
-  }
+    // if new user
+    if (!users[body.name]) {
+      responseCode = 201;
+      users[body.name] = {};
+    }
 
-  users[body.name].name = body.name;
-  users[body.name].age = body.age;
+    users[body.name].name = body.name;
+    users[body.name].age = body.age;
 
-  // changes message if new user was created
-  if (responseCode === 201) {
-    responseJSON.message = 'Created Successfully';
+    // changes message if new user was created
+    if (responseCode === 201) {
+      responseJSON.message = 'Created Successfully';
+      return respondJSON(request, response, responseCode, responseJSON);
+    }
+
+    // writes custom message is user has been updated
+    responseJSON.message = `User ${users[body.name]} now has the age of ${users[body.age]} set.`;
     return respondJSON(request, response, responseCode, responseJSON);
-  }
-
-  // writes custom message is user has been updated
-  responseJSON.message = `User ${users[body.name]} now has the age of ${users[body.age]} set.`;
-  return respondJSON(request, response, responseCode, responseJSON);
+  });
 };
 
 // getUsers functions ---------------------------------------------------------
